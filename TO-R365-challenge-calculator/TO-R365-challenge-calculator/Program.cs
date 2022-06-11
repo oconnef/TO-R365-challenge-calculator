@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using TOCalculator;
+using Unity;
 
 namespace TO_R365_challenge_calculator
 {
@@ -16,6 +17,9 @@ namespace TO_R365_challenge_calculator
 
         static void Main(string[] args)
         {
+            Console.WriteLine("R365 Calculator Challenge");
+            Console.WriteLine();
+
             // Test if input arguments were supplied.
             if (args.Length == 0)
             {
@@ -64,16 +68,20 @@ namespace TO_R365_challenge_calculator
             Console.WriteLine(usageMsg);
             Console.WriteLine("");
 
-            Calculator c = new Calculator(maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters);
+            IUnityContainer container = new UnityContainer();
+            container.RegisterType<IR365Calculator, Adder>();
+
+            container.RegisterInstance<Adder>(new Adder(maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters));
             
-            Console.WriteLine("R365 Calculator Challenge");
-            Console.WriteLine();
+            var calc = container.Resolve<Calculator>();
+            
             Console.WriteLine("Enter the data to be calculated in the format \"//{character_delimiter}\\n{numbers}\": ");
             Console.WriteLine("*Custom string delimiter can be specified in the format \"//[{delimiter}]\\n{numbers}\": ");
 
             while (true)
             {
-                c.Delimiters = delimiters; //reset delimiters in case someone uses a number as delimiter
+
+                calc.ResetDelimiters(delimiters); //reset delimiters in case someone uses a number as delimiter
 
                 string readInput = Console.ReadLine();
                 string customDelimiter = ""; 
@@ -83,8 +91,13 @@ namespace TO_R365_challenge_calculator
                 //check as single line input or '\n' as delimiter input 
                 if (readInput.StartsWith(delimiterTrimChar) && matches.Count > 0)
                 {
+                    if (matches.Count == 1) // is single line of input...
+                    {
+                        inputData = readInput.Substring(readInput.IndexOf("\\n") + 2); //start after "//\n"
+                        customDelimiter = readInput.Substring(0, readInput.LastIndexOf("\\n"));
+                    }
                     // test for \n char is specified as single char delimiter... 
-                    if (matches.Count > 1 && readInput.StartsWith((delimiterTrimChar.ToString() + delimiterTrimChar.ToString() + "\\n")))
+                    else if (matches.Count > 1 && readInput.StartsWith((delimiterTrimChar.ToString() + delimiterTrimChar.ToString() + "\\n")))
                     {
                         inputData = readInput.Substring(6); //start after "//\n"
                         customDelimiter = readInput.Substring(0, 4); //delimeter is //\n
@@ -107,9 +120,9 @@ namespace TO_R365_challenge_calculator
 
                 try
                 {
-                    c.ParseInput(customDelimiter, inputData);
+                    calc.ParseInput(customDelimiter, inputData);
 
-                    Console.WriteLine("The result is:" + c.Add());
+                    Console.WriteLine("The result is:" + calc.Calculate());
                 }
                 catch (ArgumentException argEx)
                 {

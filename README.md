@@ -2,7 +2,7 @@
 Tom OConnell - Restaurant365 Code Challenge - String Calculator
 
 # Tom's Notes: 
-All Stretch Goals implemented, which I suppose is a bit of a breaking change when it comes to the input. I chose to implement using the first character as the operator. 
+All Stretch Goals implemented, some of which (maxValue, no-negatives) will change behavior. Usage indicated below...
 
 # Usage: 
 TO-R365-challenge-calculator.exe [-maxVal {int: maxVal}] [-allowNegtives {bool: true|false}] [-addDelimiter {string: delimiter}]"

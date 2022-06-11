@@ -62,9 +62,13 @@ namespace TOCalculator
             //parse input on delimeters
             string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);
 
-            _addends = Array.ConvertAll(stringArgs, 
-                s => (int.TryParse(s, out int intResult) ? intResult : 0))  //replace invalid, null or empty string with 0
-                .Where(t => t <= _maxVal).ToArray();                        //filter 'invalid' numbers > _maxVal
+            //_addends = Array.ConvertAll(stringArgs, 
+            //    s => (int.TryParse(s, out int intResult) ? intResult : 0))  //replace invalid, null or empty string with 0
+            //    .Where(t => t <= _maxVal).ToArray();                        //filter 'invalid' numbers > _maxVal
+
+            //refactor to allow replacement to 0 rather than filtering
+            _addends = Array.ConvertAll(stringArgs,
+                s => (int.TryParse(s, out int intResult) ? (intResult > MaxVal ? 0 : intResult) : 0)).ToArray();  //replace invalid, > _maxVal, null or empty string with 0 
 
             if (_addends.Any(t => t < 0))
             {
@@ -76,7 +80,17 @@ namespace TOCalculator
 
         public string Add()
         {
-            return _addends.Sum().ToString();
+            StringBuilder sb = new StringBuilder();
+            int sum = 0;
+            foreach (int i in _addends)
+            {
+                sum += i;
+                sb.Append(i.ToString() + "+");
+            }
+            sb.Remove(sb.Length - 1, 1) //remove last '+'
+                .Append(" = " + sum.ToString());
+
+            return sb.ToString();
         }
     }
 }

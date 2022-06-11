@@ -73,14 +73,20 @@ namespace TO_R365_CC_Tests
             _calc.ParseInput(input);
             Assert.That(_calc.Add(), Is.EqualTo("5001"));
 
-            input = "4,-3";
-            _calc.ParseInput(input);
-            Assert.That(_calc.Add(), Is.EqualTo("1"));
+            //input = "4,-3";
+            //_calc.ParseInput(input);
+            //Assert.That(_calc.Add(), Is.EqualTo("1"));
 
             input = "1,2,3,4,5,6,7,8,9,10,11,12";
             _calc.ParseInput(input);
             Assert.That(_calc.Add(), Is.EqualTo("78"));
+        }
 
+        [Test]
+        public void TestNegativeArgumentsIsFailure()
+        {
+            string input = "4,-3";
+            Assert.Throws<ArgumentException>(() => _calc.ParseInput(input));
         }
     }
 }

@@ -2,9 +2,10 @@
 {
     public interface IR365Calculator
     {
-        int MaxArgs {
-            get;
-        }
+        //removed per feature 2
+        //int MaxArgs {
+        //    get;
+        //}
 
         public void ParseInput(string input);
 

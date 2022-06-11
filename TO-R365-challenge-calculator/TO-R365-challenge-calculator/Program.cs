@@ -10,7 +10,6 @@ namespace TO_R365_challenge_calculator
         static void Main(string[] args)
         {
             Calculator c = new Calculator();
-            c.MaxArgs = maxArgs;
             
             Console.WriteLine("R365 Calculator Challenge");
 

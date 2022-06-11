@@ -8,30 +8,27 @@ namespace TO_R365_CC_Tests
         public void Setup()
         {
             calc = new TOCalculator.Calculator();
+            //calc.MaxArgs = 2;
         }
 
-        [Test]
-        public void TestMaximumArgumentsIsSuccess()
-        {
-            calc.MaxArgs = 2;
-            string input = "20,20";
-           
-            Assert.DoesNotThrow(() => calc.ParseInput(input));
-        }
+        //[Test]
+        //public void TestMaximumArgumentsIsSuccess()
+        //{
+        //    string input = "20,20";
 
-        [Test]
-        public void TestMaximumArgumentsIsFailure()
-        {
-            calc.MaxArgs = 2;
-            string input = "20,20,20";
-            Assert.Throws<ArgumentException>(() => calc.ParseInput(input));
-        }
+        //    Assert.DoesNotThrow(() => calc.ParseInput(input));
+        //}
+
+        //[Test]
+        //public void TestMaximumArgumentsIsFailure()
+        //{
+        //    string input = "20,20,20";
+        //    Assert.Throws<ArgumentException>(() => calc.ParseInput(input));
+        //}
 
         [Test]
         public void TestInvalidInputsHandledIsSuccess()
         {
-            calc.MaxArgs = 2;
-
             string input = "20,";
             calc.ParseInput(input);
             Assert.That(calc.Add(), Is.EqualTo("20"));
@@ -52,8 +49,6 @@ namespace TO_R365_CC_Tests
         [Test]
         public void TestSumsIsSuccess()
         {
-            calc.MaxArgs = 2;
-
             string input = "20";
             calc.ParseInput(input);
             Assert.That(calc.Add(), Is.EqualTo("20"));
@@ -65,6 +60,11 @@ namespace TO_R365_CC_Tests
             input = "4,-3";
             calc.ParseInput(input);
             Assert.That(calc.Add(), Is.EqualTo("1"));
+
+            input = "1,2,3,4,5,6,7,8,9,10,11,12";
+            calc.ParseInput(input);
+            Assert.That(calc.Add(), Is.EqualTo("78"));
+
         }
     }
 }

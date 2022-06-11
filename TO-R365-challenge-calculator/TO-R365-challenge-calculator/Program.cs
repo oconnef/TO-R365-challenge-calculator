@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using TOCalculator;
 
 namespace TO_R365_challenge_calculator
@@ -24,26 +25,55 @@ namespace TO_R365_challenge_calculator
             Console.WriteLine("*Custom string delimiter can be specified in the format \"//[{delimiter}]\\n{numbers}\": ");
             Console.WriteLine("**Maximum value is: " + maxVal.ToString());
 
-            string customDelimiter = Console.ReadLine();
-            string inputData = Console.ReadLine();
-
-            try
+            while (true)
             {
-                c.ParseInput(customDelimiter, inputData);
+                c.Delimiters = delimiters; //reset delimiters in case someone uses a number as delimiter
+
+                string readInput = Console.ReadLine();
+                string customDelimiter = ""; 
+                string inputData="";
+                MatchCollection matches = Regex.Matches(readInput, @"\\n");
                 
-                Console.WriteLine("The result is:" + c.Add());
-            }
-            catch (ArgumentException argEx)
-            {
-                Console.WriteLine(argEx.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.Write(ex.Message);
-            }
+                //check as single line input or '\n' as delimiter input 
+                if (readInput.StartsWith(delimiterTrimChar) && matches.Count > 0)
+                {
+                    // test for \n char is specified as single char delimiter... 
+                    if (matches.Count > 1 && readInput.StartsWith((delimiterTrimChar.ToString() + delimiterTrimChar.ToString() + "\\n")))
+                    {
+                        inputData = readInput.Substring(6); //start after "//\n"
+                        customDelimiter = readInput.Substring(0, 4); //delimeter is //\n
+                    }
+                    else if (matches.Count > 1 && readInput.StartsWith((delimiterTrimChar.ToString() + delimiterTrimChar.ToString() + "[")))
+                    {
+                        // \n is one of string delimeters in brackets
+                        inputData = readInput.Substring(readInput.LastIndexOf("]\\n") + 3); //start after "]\n"
+                        customDelimiter = readInput.Substring(0, readInput.LastIndexOf("]\\n") + 1); //string delimeter(s) has //\n
+                    }
+                    else //input is multi-line, get data
+                    {
+                        customDelimiter = readInput;
+                        inputData = Console.ReadLine();
+                    }
+                }
+                else {
+                    inputData = readInput;
+                }
 
-            Console.WriteLine("Press any key to exit");
-            Console.Read();
+                try
+                {
+                    c.ParseInput(customDelimiter, inputData);
+
+                    Console.WriteLine("The result is:" + c.Add());
+                }
+                catch (ArgumentException argEx)
+                {
+                    Console.WriteLine(argEx.Message);
+                }
+                catch (Exception ex)
+                {
+                   Console.Write(ex.Message);
+                }
+            }
         }
     }
 }

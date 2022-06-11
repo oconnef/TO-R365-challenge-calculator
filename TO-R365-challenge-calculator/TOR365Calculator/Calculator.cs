@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace TOCalculator
 {
@@ -35,6 +36,13 @@ namespace TOCalculator
             _addends = Array.ConvertAll(stringArgs, 
                 s => (int.TryParse(s, out int intResult) ? intResult : 0))  //replace invalid, null or empty string with 0
                 .Where(t => t <= _maxVal).ToArray();                        //filter 'invalid' numbers > _maxVal
+
+            if (_addends.Any(t => t < 0))
+            {
+                StringBuilder sb = new StringBuilder();
+                _addends.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
+                throw new ArgumentException("Negative arguments are not allowed! Invalid arguments are: " + sb.ToString().TrimEnd(','));
+            }
         }
 
         public string Add()

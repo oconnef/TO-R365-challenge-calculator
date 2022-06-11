@@ -2,7 +2,7 @@ namespace TO_R365_CC_Tests
 {
     public class Tests
     {
-        private TOCalculator.Calculator _calc;
+        private TOCalculator.CalculatorOLD _calc;
         private string[] _delimiters = { "\n", "," };
         private string _dummyCustomDelimiter = ",";
         private string delimiterAnyLength = "//[";
@@ -10,7 +10,7 @@ namespace TO_R365_CC_Tests
         [SetUp]
         public void Setup()
         {
-            _calc = new TOCalculator.Calculator(1000, '/', delimiterAnyLength, false, _delimiters);
+            _calc = new TOCalculator.CalculatorOLD(1000, '/', delimiterAnyLength, false, _delimiters);
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace TO_R365_CC_Tests
         public void TestNegativeArgumentsIsSuccess()
         {
             string input = "4,-3";
-            _calc = new TOCalculator.Calculator(1000, '/', delimiterAnyLength, true, _delimiters);
+            _calc = new TOCalculator.CalculatorOLD(1000, '/', delimiterAnyLength, true, _delimiters);
             _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("4+-3 = 1"));
         }

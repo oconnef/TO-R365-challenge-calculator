@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using TOCalculator;
 
@@ -6,24 +7,69 @@ namespace TO_R365_challenge_calculator
 {
     internal class Program
     {
-        private const int maxVal = 1000;
-        private static string[] delimiters = new string[] { "\n", "," };
+        private static int maxVal = 1000;
+        private static string[] delimiters = new string[] { "\\n", "," };
         private static char delimiterTrimChar = '/';
         private static string delimiterAnyLength = "//[";
+        private static bool allowNegatives = false;
+        private const string usageMsg = "usage: TO-R365-challenge-calculator.exe [-maxVal {maxVal}] [-allowNegtives {true|false}] [-addDelimiter {delimiter}]";
 
         static void Main(string[] args)
         {
-            Calculator c = new Calculator();
-            c.Delimiters = delimiters;
-            c.DelimiterTrimChar = delimiterTrimChar;
-            c.DelimiterAnyLength = delimiterAnyLength;
-            c.MaxVal = maxVal;
+            // Test if input arguments were supplied.
+            if (args.Length == 0)
+            {
+                Console.WriteLine("No arguments specified, using default values:");
+            }
+            else //parse any supplied args
+            {
+                for (int a=0; a<args.Length; a+=2)
+                {
+                    switch (args[a]) {
+                        case "-maxVal":
+                            if (!int.TryParse(args[a+1], out maxVal))
+                            {
+                                Console.WriteLine("ERROR: -maxVal: " + args[a+1] + " is an invalid value! Try again!");
+                                Console.WriteLine(usageMsg);
+                                return; 
+                            }
+                            break;
+                        case "-allowNegatives":
+                            if (!Boolean.TryParse(args[a + 1], out allowNegatives))
+                            {
+                                Console.WriteLine("ERROR: -allowNegatives: " + args[a + 1] + " is an invalid value! Try again!");
+                                Console.WriteLine(usageMsg);
+                                return;
+                            }
+                            break;
+                        case "-addDelimiter":
+                            string[] tempDelimiters = new string[delimiters.Length + 1];
+                            tempDelimiters[tempDelimiters.Length - 1] = args[a+1];
+                            delimiters = tempDelimiters;
+                            break;
+                        default:
+                            Console.WriteLine("ERROR: " + args[a] + " is an invalid argument! Try again!");
+                            Console.WriteLine(usageMsg);
+                            return;
+                    }                
+                }                
+            }
+            Console.WriteLine("Maximum Allowed Value: " + maxVal.ToString());
+            Console.WriteLine("Allow Negative Values: " + allowNegatives.ToString());
+            Console.Write("Delimiters: {");
+            StringBuilder sb = new StringBuilder();
+            foreach (string s in delimiters) { sb.Append("\"" + s + "\","); }
+            Console.Write(sb.ToString().Substring(0, sb.Length - 1) + "}\r\n\n");
 
+            Console.WriteLine(usageMsg);
+            Console.WriteLine("");
+
+            Calculator c = new Calculator(maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters);
+            
             Console.WriteLine("R365 Calculator Challenge");
             Console.WriteLine();
             Console.WriteLine("Enter the data to be calculated in the format \"//{character_delimiter}\\n{numbers}\": ");
             Console.WriteLine("*Custom string delimiter can be specified in the format \"//[{delimiter}]\\n{numbers}\": ");
-            Console.WriteLine("**Maximum value is: " + maxVal.ToString());
 
             while (true)
             {

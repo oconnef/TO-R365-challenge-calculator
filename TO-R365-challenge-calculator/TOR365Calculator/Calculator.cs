@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TOCalculator
 {
@@ -10,6 +11,7 @@ namespace TOCalculator
         private int _maxVal;
         private string[] _delimiters;
         private char _delimiterTrimChar;
+        private string _delimiterAnyLength;
 
         public int MaxVal 
         { 
@@ -26,6 +28,12 @@ namespace TOCalculator
             get => _delimiterTrimChar;
             set => _delimiterTrimChar = value;
         }
+        public string DelimiterAnyLength
+        {
+            get => _delimiterAnyLength;
+            set => _delimiterAnyLength = value;
+        }
+
 
         public void ParseInput(string customDelimiter, string input)
         {
@@ -37,7 +45,14 @@ namespace TOCalculator
             input.Replace(" ","");
 
             //add custom delimiter
-            _delimiters = _delimiters.Append(customDelimiter.TrimStart(DelimiterTrimChar)).ToArray();
+            string d = Regex.Match(customDelimiter, @"\[([^]]*)\]").Groups[1].Value;
+            if (d.Length == 0) 
+            {
+                //delimiter is only a single character
+                d = customDelimiter.TrimStart(DelimiterTrimChar);
+            }
+            _delimiters = _delimiters.Append(d).ToArray();
+
 
             //parse input on delimeters
             string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);

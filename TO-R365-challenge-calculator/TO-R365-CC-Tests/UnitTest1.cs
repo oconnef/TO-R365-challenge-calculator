@@ -4,7 +4,8 @@ namespace TO_R365_CC_Tests
     {
         private TOCalculator.Calculator _calc;
         private string[] _delimiters = { "\n", "," };
-        private string _customDelimiter = ",";
+        private string _dummyCustomDelimiter = ",";
+        private string delimiterAnyLength = "//[";
 
         [SetUp]
         public void Setup()
@@ -12,6 +13,7 @@ namespace TO_R365_CC_Tests
             _calc = new TOCalculator.Calculator();
             _calc.Delimiters = _delimiters;
             _calc.DelimiterTrimChar = '/';
+            _calc.DelimiterAnyLength = delimiterAnyLength;
             _calc.MaxVal = 1000;
         }
 
@@ -19,12 +21,12 @@ namespace TO_R365_CC_Tests
         public void TestNewlineDelimeterIsSuccess()
         {
             string input = "10\n";
-            _calc.ParseInput(_customDelimiter, input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
 
             Assert.That(_calc.Add(), Is.EqualTo("10"));
             
             input = "1\n2,3";
-            _calc.ParseInput(_customDelimiter, input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("6"));            
         }
 
@@ -32,19 +34,19 @@ namespace TO_R365_CC_Tests
         public void TestInvalidInputsHandledIsSuccess()
         {
             string input = "20,";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("20"));
 
             input = ",20";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("20"));
 
             input = "5,tytyt";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("5"));
 
             input = "";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("0"));
         }
 
@@ -52,11 +54,11 @@ namespace TO_R365_CC_Tests
         public void TestSumsIsSuccess()
         {
             string input = "20";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("20"));
                         
             input = "1,2,3,4,5,6,7,8,9,10,11,12";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("78"));
         }
 
@@ -64,24 +66,24 @@ namespace TO_R365_CC_Tests
         public void TestNegativeArgumentsIsFailure()
         {
             string input = "4,-3";
-            Assert.Throws<ArgumentException>(() => _calc.ParseInput(_customDelimiter,input));
+            Assert.Throws<ArgumentException>(() => _calc.ParseInput(_dummyCustomDelimiter, input));
         }
 
         [Test]
         public void TestSumsWithMaxValIsSuccess()
         {
             string input = "1,5000";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("1"));
 
             input = "2,1001,6";
-            _calc.ParseInput(_customDelimiter,input);
+            _calc.ParseInput(_dummyCustomDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("8"));
             
         }
 
         [Test]
-        public void TestCustomDelimiterIsSuccess()
+        public void TestCustomDelimiterSingleCharIsSuccess()
         {
             string customDelimiter = "//#"; 
             string input = "2#5";
@@ -90,9 +92,23 @@ namespace TO_R365_CC_Tests
 
             customDelimiter = "//,";
             input = "2,ff,100";
-            _calc.ParseInput(_customDelimiter, input);
+            _calc.ParseInput(customDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("102"));
 
+            customDelimiter = "//[";
+            input = "2[15";
+            _calc.ParseInput(customDelimiter, input);
+            Assert.That(_calc.Add(), Is.EqualTo("17"));
+
+        }
+
+        [Test]
+        public void TestCustomDelimiterSingleStringIsSuccess()
+        {
+            string customDelimiter = "//[***]";
+            string input = "11***22***33";
+            _calc.ParseInput(customDelimiter, input);
+            Assert.That(_calc.Add(), Is.EqualTo("66"));
         }
     }
 }

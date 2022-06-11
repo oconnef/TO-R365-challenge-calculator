@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using TOCalculator;
 using Unity;
+using Unity.Injection;
 
 namespace TO_R365_challenge_calculator
 {
@@ -17,73 +19,54 @@ namespace TO_R365_challenge_calculator
 
         static void Main(string[] args)
         {
-            Console.WriteLine("R365 Calculator Challenge");
-            Console.WriteLine();
-
-            // Test if input arguments were supplied.
-            if (args.Length == 0)
-            {
-                Console.WriteLine("No arguments specified, using default values:");
-            }
-            else //parse any supplied args
-            {
-                for (int a=0; a<args.Length; a+=2)
-                {
-                    switch (args[a]) {
-                        case "-maxVal":
-                            if (!int.TryParse(args[a+1], out maxVal))
-                            {
-                                Console.WriteLine("ERROR: -maxVal: " + args[a+1] + " is an invalid value! Try again!");
-                                Console.WriteLine(usageMsg);
-                                return; 
-                            }
-                            break;
-                        case "-allowNegatives":
-                            if (!Boolean.TryParse(args[a + 1], out allowNegatives))
-                            {
-                                Console.WriteLine("ERROR: -allowNegatives: " + args[a + 1] + " is an invalid value! Try again!");
-                                Console.WriteLine(usageMsg);
-                                return;
-                            }
-                            break;
-                        case "-addDelimiter":
-                            string[] tempDelimiters = new string[delimiters.Length + 1];
-                            tempDelimiters[tempDelimiters.Length - 1] = args[a+1];
-                            delimiters = tempDelimiters;
-                            break;
-                        default:
-                            Console.WriteLine("ERROR: " + args[a] + " is an invalid argument! Try again!");
-                            Console.WriteLine(usageMsg);
-                            return;
-                    }                
-                }                
-            }
-            Console.WriteLine("Maximum Allowed Value: " + maxVal.ToString());
-            Console.WriteLine("Allow Negative Values: " + allowNegatives.ToString());
-            Console.Write("Delimiters: {");
-            StringBuilder sb = new StringBuilder();
-            foreach (string s in delimiters) { sb.Append("\"" + s + "\","); }
-            Console.Write(sb.ToString().Substring(0, sb.Length - 1) + "}\r\n\n");
-
-            Console.WriteLine(usageMsg);
-            Console.WriteLine("");
+            HandleArgs(args);
 
             IUnityContainer container = new UnityContainer();
-            container.RegisterType<IR365Calculator, Adder>();
+            container.AddExtension(new Diagnostic());
 
-            container.RegisterInstance<Adder>(new Adder(maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters));
-            
-            var calc = container.Resolve<Calculator>();
-            
-            Console.WriteLine("Enter the data to be calculated in the format \"//{character_delimiter}\\n{numbers}\": ");
+            container.RegisterType<Calculator>("adder", new InjectionConstructor(new object[] { new Adder(), maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters }));
+            container.RegisterType<Calculator>("subtractor", new InjectionConstructor(new object[] { new Subtractor(), maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters }));
+            container.RegisterType<Calculator>("multiplier", new InjectionConstructor(new object[] { new Multiplier(), maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters }));
+            container.RegisterType<Calculator>("divider", new InjectionConstructor(new object[] { new Divider(), maxVal, delimiterTrimChar, delimiterAnyLength, allowNegatives, delimiters }));
+
+            Console.WriteLine("Enter the data to be calculated in the format \"{operator: +|-|*|/}//{character_delimiter}\\n{numbers}\": ");
             Console.WriteLine("*Custom string delimiter can be specified in the format \"//[{delimiter}]\\n{numbers}\": ");
 
+            string[] operations = { "+", "-", "*", "/" };
             while (true)
             {
-
-                calc.ResetDelimiters(delimiters); //reset delimiters in case someone uses a number as delimiter
-
                 string readInput = Console.ReadLine();
+                string operation = readInput.Substring(0, 1);
+
+                //make sure operator is correct
+                string calcType; 
+                if (operations.ToArray().Contains(operation))
+                {
+                    switch (operation)
+                    {
+                        case "-":
+                            calcType = "subtractor";
+                            break;
+                        case "*":
+                            calcType = "multiplier";
+                            break;
+                        case "/":
+                            calcType = "divider";
+                            break;
+                        case "+":
+                        default:
+                            calcType = "adder";
+                            break;
+                    }
+                    readInput = readInput[1..]; //remove header operation
+                }
+                else //default to addition, presume older formatting
+                {
+                    calcType = "adder";
+                }
+
+                var calc = container.Resolve<Calculator>(calcType);
+                calc.ResetDelimiters(delimiters);
                 string customDelimiter = ""; 
                 string inputData="";
                 MatchCollection matches = Regex.Matches(readInput, @"\\n");
@@ -133,6 +116,60 @@ namespace TO_R365_challenge_calculator
                    Console.Write(ex.Message);
                 }
             }
+        }
+        static void HandleArgs(string[] args)
+        {
+            Console.WriteLine("R365 Calculator Challenge");
+            Console.WriteLine();
+
+            // Test if input arguments were supplied.
+            if (args.Length == 0)
+            {
+                Console.WriteLine("No arguments specified, using default values:");
+            }
+            else //parse any supplied args
+            {
+                for (int a = 0; a < args.Length; a += 2)
+                {
+                    switch (args[a])
+                    {
+                        case "-maxVal":
+                            if (!int.TryParse(args[a + 1], out maxVal))
+                            {
+                                Console.WriteLine("ERROR: -maxVal: " + args[a + 1] + " is an invalid value! Try again!");
+                                Console.WriteLine(usageMsg);
+                                return;
+                            }
+                            break;
+                        case "-allowNegatives":
+                            if (!Boolean.TryParse(args[a + 1], out allowNegatives))
+                            {
+                                Console.WriteLine("ERROR: -allowNegatives: " + args[a + 1] + " is an invalid value! Try again!");
+                                Console.WriteLine(usageMsg);
+                                return;
+                            }
+                            break;
+                        case "-addDelimiter":
+                            string[] tempDelimiters = new string[delimiters.Length + 1];
+                            tempDelimiters[tempDelimiters.Length - 1] = args[a + 1];
+                            delimiters = tempDelimiters;
+                            break;
+                        default:
+                            Console.WriteLine("ERROR: " + args[a] + " is an invalid argument! Try again!");
+                            Console.WriteLine(usageMsg);
+                            return;
+                    }
+                }
+            }
+            Console.WriteLine("Maximum Allowed Value: " + maxVal.ToString());
+            Console.WriteLine("Allow Negative Values: " + allowNegatives.ToString());
+            Console.Write("Delimiters: {");
+            StringBuilder sb = new StringBuilder();
+            foreach (string s in delimiters) { sb.Append("\"" + s + "\","); }
+            Console.Write(sb.ToString().Substring(0, sb.Length - 1) + "}\r\n\n");
+
+            Console.WriteLine(usageMsg);
+            Console.WriteLine("");
         }
     }
 }

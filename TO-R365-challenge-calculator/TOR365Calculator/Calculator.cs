@@ -2,11 +2,21 @@
 {
     public class Calculator
     {
-        private IR365Calculator _calculator = null;
+        private readonly IR365Calculator _calculator = null;
 
-        public Calculator(IR365Calculator calculator)
+        public Calculator(IR365Calculator calculator, 
+            int maxVal,
+            char delimiterTrimChar,
+            string delimiterAnyLength,
+            bool allowNegatives,
+            string[] delimiters)
         {
             _calculator = calculator;
+            _calculator.MaxVal = maxVal;
+            _calculator.DelimiterTrimChar = delimiterTrimChar;
+            _calculator.DelimiterAnyLength = delimiterAnyLength;
+            _calculator.AllowNegatives = allowNegatives;
+            _calculator.Delimiters = delimiters;
         }
 
         public void ResetDelimiters(string[] delimiters)

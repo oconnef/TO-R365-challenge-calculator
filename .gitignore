@@ -3,3 +3,10 @@
 ################################################################################
 
 /.vs
+/TO-R365-challenge-calculator/TOR365Calculator/bin/Debug/netcoreapp3.1
+/TO-R365-challenge-calculator/TOR365Calculator/obj
+/TO-R365-challenge-calculator/TO-R365-challenge-calculator/bin/Debug/netcoreapp3.1
+/TO-R365-challenge-calculator/TO-R365-challenge-calculator/obj
+/TO-R365-challenge-calculator/TO-R365-CC-Tests/bin/Debug/net6.0
+/TO-R365-challenge-calculator/TO-R365-CC-Tests/obj
+/TO-R365-challenge-calculator/.vs

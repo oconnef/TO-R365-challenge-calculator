@@ -1,0 +1,40 @@
+﻿using System;
+using System.Linq;
+
+namespace TOCalculator
+{
+    public class Calculator : IR365Calculator
+    {
+        private int _maxArgs;
+        private int[] _addends = { 0 };
+
+        public int MaxArgs {
+            get => _maxArgs;
+            set => _maxArgs = value;
+        }
+
+        public void ParseInput(string input)
+        {
+            //check for valid input
+            if (string.IsNullOrEmpty(input))
+                input = "0";
+
+            //remove any white space
+            input.Replace(" ","");
+
+            //parse input on ',' delimeter
+            string[] stringArgs = input.Split(',');
+            if(stringArgs.Length > _maxArgs)
+                throw new ArgumentException("Too many arguments passed to Calculator. Max number of arguments is " + _maxArgs.ToString() + " Try Again...");
+
+
+            _addends = Array.ConvertAll(stringArgs,
+                s => (int.TryParse(s, out int intResult) ? intResult : 0)); //replace invalid, null or empty string with 0
+        }
+
+        public string Add()
+        {
+            return _addends.Sum().ToString();
+        }
+    }
+}

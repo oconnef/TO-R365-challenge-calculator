@@ -5,13 +5,14 @@ namespace TO_R365_challenge_calculator
 {
     internal class Program
     {
-        //private const int maxArgs = 2;
+        private const int maxVal = 1000;
         private static string[] delimiters = new string[] { "\n", "," };
 
         static void Main(string[] args)
         {
             Calculator c = new Calculator();
             c.Delimiters = delimiters;
+            c.MaxVal = maxVal;
             
             Console.WriteLine("R365 Calculator Challenge");
 

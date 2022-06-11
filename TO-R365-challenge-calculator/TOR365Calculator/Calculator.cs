@@ -6,17 +6,15 @@ namespace TOCalculator
 {
     public class Calculator : IR365Calculator
     {
-        // removed per feature 2
-        // private int _maxArgs;
         private int[] _addends = { 0 };
-
-        //public int MaxArgs
-        //{
-        //    get => _maxArgs;
-        //    set => _maxArgs = value;
-        //}
-
+        private int _maxVal;
         private string[] _delimiters;
+
+        public int MaxVal 
+        { 
+            get => _maxVal;
+            set => _maxVal = value;
+        }
         public string[] Delimiters
         {
             get => _delimiters;
@@ -34,11 +32,10 @@ namespace TOCalculator
 
             //parse input on delimeters
             string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);
-            //if(stringArgs.Length > _maxArgs)
-            //    throw new ArgumentException("Too many arguments passed to Calculator. Max number of arguments is " + _maxArgs.ToString() + " Try Again...");
 
-            _addends = Array.ConvertAll(stringArgs,
-                s => (int.TryParse(s, out int intResult) ? intResult : 0)); //replace invalid, null or empty string with 0
+            _addends = Array.ConvertAll(stringArgs, 
+                s => (int.TryParse(s, out int intResult) ? intResult : 0))  //replace invalid, null or empty string with 0
+                .Where(t => t <= _maxVal).ToArray();                        //filter 'invalid' numbers > _maxVal
 
             if (_addends.Any(t => t < 0))
             {

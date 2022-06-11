@@ -9,6 +9,7 @@ namespace TOCalculator
         private int[] _addends = { 0 };
         private int _maxVal;
         private string[] _delimiters;
+        private char _delimiterTrimChar;
 
         public int MaxVal 
         { 
@@ -20,8 +21,13 @@ namespace TOCalculator
             get => _delimiters;
             set => _delimiters = value;
         }
+        public char DelimiterTrimChar
+        {
+            get => _delimiterTrimChar;
+            set => _delimiterTrimChar = value;
+        }
 
-        public void ParseInput(string input)
+        public void ParseInput(string customDelimiter, string input)
         {
             //check for valid input
             if (string.IsNullOrEmpty(input))
@@ -29,6 +35,9 @@ namespace TOCalculator
 
             //remove any white space
             input.Replace(" ","");
+
+            //add custom delimiter
+            _delimiters = _delimiters.Append(customDelimiter.TrimStart(DelimiterTrimChar)).ToArray();
 
             //parse input on delimeters
             string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);

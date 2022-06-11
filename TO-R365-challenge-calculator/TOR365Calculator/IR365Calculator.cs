@@ -7,7 +7,7 @@
             set;
         } 
 
-        public void ParseInput(string input);
+        public void ParseInput(string customDelimiter, string input);
 
         public string Add();
     }

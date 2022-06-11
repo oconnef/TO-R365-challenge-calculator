@@ -9,8 +9,8 @@ TO-R365-challenge-calculator.exe [-maxVal {int: maxVal}] [-allowNegtives {bool: 
 
 # Math Operations (default operation is addition):
 * 20 will return 20
-* 1,5000 will return 5001 
-* 4,-3 will return 1
+* 1,5000 will return 1 
+* 4,-3 will return 1 (error if -allowNegatives is defaut/false)
 * 5,tytyt will return 5
 
 ## Now using operator as first character

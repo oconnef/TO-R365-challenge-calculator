@@ -1,7 +1,13 @@
 # TO-R365-challenge-calculator
 Tom OConnell - Restaurant365 Code Challenge - String Calculator
 
-## Summary
+# Tom's Notes: 
+All Stretch Goals implemented, which I suppose is a bit of a breaking change when it comes to the input. I chose to implement using the first character as the operator. 
+
+# Usage: 
+TO-R365-challenge-calculator.exe [-maxVal {int: maxVal}] [-allowNegtives {bool: true|false}] [-addDelimiter {string: delimiter}]";
+
+## Provided Summary
 Create a calculator that only supports an Add operation given a single formatted string
 
 * Provide code via a public distributed version control repository i.e. GitHub. Do NOT fork this repo

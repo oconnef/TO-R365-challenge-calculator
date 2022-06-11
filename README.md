@@ -8,20 +8,20 @@ All Stretch Goals implemented, some of which (maxValue, no-negatives) will chang
 TO-R365-challenge-calculator.exe [-maxVal {int: maxVal}] [-allowNegtives {bool: true|false}] [-addDelimiter {string: delimiter}]"
 
 # Math Operations (default operation is addition):
-20 will return 20
-1,5000 will return 5001 
-4,-3 will return 1
-5,tytyt will return 5
+* 20 will return 20
+* 1,5000 will return 5001 
+* 4,-3 will return 1
+* 5,tytyt will return 5
 
 ## Now using operator as first character
-+1,2,3,4,5,6,7,8,9,10,11,12 will return 78
-+1\n2,3 will return 6
-+2,1001,6 will return 8
+* +1,2,3,4,5,6,7,8,9,10,11,12 will return 78
+* +1\n2,3 will return 6
+* +2,1001,6 will return 8
 
-+//#\n2#5 will return 7
--//#\n2#5 will return -3
-*//#\n2#5 will return 10
-///#\n10#5 will return 2
+* +//#\n2#5 will return 7
+* -//#\n2#5 will return -3
+* *//#\n2#5 will return 10
+* ///#\n10#5 will return 2
 
 ***Divide by zero will result in display of error message
 

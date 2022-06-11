@@ -2,9 +2,25 @@
 {
     public interface IR365Calculator
     {
-        string[] Delimiters {
-            get;
-            set;
+        public int MaxVal
+        {
+            get;set;
+        }
+        public string[] Delimiters
+        {
+            get; set;
+        }
+        public char DelimiterTrimChar
+        {
+            get; set;
+        }
+        public string DelimiterAnyLength
+        {
+            get; set;
+        }
+        public bool AllowNegatives
+        {
+            get; set;
         }
 
         public void ResetDelimiters(string[] delimiters);

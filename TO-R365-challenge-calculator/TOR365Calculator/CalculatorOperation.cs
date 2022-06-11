@@ -5,18 +5,19 @@ using System.Text.RegularExpressions;
 
 namespace TOCalculator
 {
-    public class CalculatorOLD
+    public class CalculatorOperation : IR365Calculator
     {
-        private int[] _addends = { 0 };
+        private int[] _operands = { 0 };
         private int _maxVal;
         private string[] _delimiters;
         private char _delimiterTrimChar;
         private string _delimiterAnyLength;
         private bool _allowNegatives;
 
-        public int MaxVal 
-        { 
+        public int MaxVal
+        {
             get => _maxVal;
+            set => _maxVal = value;
         }
         public string[] Delimiters
         {
@@ -26,28 +27,22 @@ namespace TOCalculator
         public char DelimiterTrimChar
         {
             get => _delimiterTrimChar;
+            set => _delimiterTrimChar = value;
         }
         public string DelimiterAnyLength
         {
             get => _delimiterAnyLength;
+            set => _delimiterAnyLength = value;
         }
         public bool AllowNegatives
         {
             get => _allowNegatives;
+            set => _allowNegatives = value;
         }
-
-        public CalculatorOLD(
-            int maxVal, 
-            char delimiterTrimChar, 
-            string delimiterAnyLength, 
-            bool allowNegatives,
-            string[] delimiters)
+        public int[] Operands
         {
-            _maxVal = maxVal;
-            _delimiters = delimiters;
-            _delimiterTrimChar = delimiterTrimChar;
-            _delimiterAnyLength = delimiterAnyLength;
-            _allowNegatives = allowNegatives;
+            get => _operands; 
+            set => _operands = value;
         }
 
         public void ResetDelimiters(string[] delimiters)
@@ -62,14 +57,14 @@ namespace TOCalculator
                 input = "0";
 
             //remove any white space
-            input.Replace(" ","");
+            input.Replace(" ", "");
 
             //add custom delimiter
             MatchCollection matches = Regex.Matches(customDelimiter, @"\[([^]]*)\]");
             if (matches.Count == 0)
             {
                 //delimiter is only a single character
-                _delimiters = _delimiters.Append(customDelimiter.TrimStart(DelimiterTrimChar)).ToArray();
+                _delimiters = _delimiters.Append(customDelimiter.TrimStart(_delimiterTrimChar)).ToArray();
             }
             else //string delimiter(s)
             {
@@ -87,38 +82,22 @@ namespace TOCalculator
             //    .Where(t => t <= _maxVal).ToArray();                        //filter 'invalid' numbers > _maxVal
 
             //refactor to allow replacement to 0 rather than filtering
-            _addends = Array.ConvertAll(stringArgs,
-                s => (int.TryParse(s, out int intResult) ? (intResult > MaxVal ? 0 : intResult) : 0)).ToArray();  //replace invalid, > _maxVal, null or empty string with 0 
+            _operands = Array.ConvertAll(stringArgs,
+                s => (int.TryParse(s, out int intResult) ? (intResult > _maxVal ? 0 : intResult) : 0)).ToArray();  //replace invalid, > _maxVal, null or empty string with 0 
 
             if (!_allowNegatives)
             {
-                if (_addends.Any(t => t < 0))
+                if (_operands.Any(t => t < 0))
                 {
                     StringBuilder sb = new StringBuilder();
-                    _addends.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
+                    _operands.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
                     throw new ArgumentException("Negative arguments are not allowed! Invalid arguments are: " + sb.ToString().TrimEnd(','));
                 }
             }
         }
-
-        public string Add()
+        public virtual string Calculate()
         {
-            return Calculate();        
-        }
-
-        public string Calculate()
-        {
-            StringBuilder sb = new StringBuilder();
-            int sum = 0;
-            foreach (int i in _addends)
-            {
-                sum += i;
-                sb.Append(i.ToString() + "+");
-            }
-            sb.Remove(sb.Length - 1, 1) //remove last '+'
-                .Append(" = " + sum.ToString());
-
-            return sb.ToString();
+            return "Calculating...";
         }
     }
 }

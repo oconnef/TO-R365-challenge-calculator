@@ -45,14 +45,19 @@ namespace TOCalculator
             input.Replace(" ","");
 
             //add custom delimiter
-            string d = Regex.Match(customDelimiter, @"\[([^]]*)\]").Groups[1].Value;
-            if (d.Length == 0) 
+            MatchCollection matches = Regex.Matches(customDelimiter, @"\[([^]]*)\]");
+            if (matches.Count == 0)
             {
                 //delimiter is only a single character
-                d = customDelimiter.TrimStart(DelimiterTrimChar);
+                _delimiters = _delimiters.Append(customDelimiter.TrimStart(DelimiterTrimChar)).ToArray();
             }
-            _delimiters = _delimiters.Append(d).ToArray();
-
+            else //string delimiter(s)
+            {
+                foreach (Match m in matches)
+                {
+                    _delimiters = _delimiters.Append(m.Groups[1].Value).ToArray();
+                }
+            }
 
             //parse input on delimeters
             string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace TOCalculator
 {
@@ -36,9 +37,15 @@ namespace TOCalculator
             //if(stringArgs.Length > _maxArgs)
             //    throw new ArgumentException("Too many arguments passed to Calculator. Max number of arguments is " + _maxArgs.ToString() + " Try Again...");
 
-
             _addends = Array.ConvertAll(stringArgs,
                 s => (int.TryParse(s, out int intResult) ? intResult : 0)); //replace invalid, null or empty string with 0
+
+            if (_addends.Any(t => t < 0))
+            {
+                StringBuilder sb = new StringBuilder();
+                _addends.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
+                throw new ArgumentException("Negative arguments are not allowed! Invalid arguments are: " + sb.ToString().TrimEnd(','));
+            }
         }
 
         public string Add()

@@ -7,6 +7,11 @@
         //    get;
         //}
 
+        string[] Delimiters {
+            get;
+            set;
+        } 
+
         public void ParseInput(string input);
 
         public string Add();

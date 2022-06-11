@@ -2,12 +2,15 @@ namespace TO_R365_CC_Tests
 {
     public class Tests
     {
-        private TOCalculator.Calculator calc;
+        private TOCalculator.Calculator _calc;
+        private string[] _delimiters = { "\n", "," };
 
         [SetUp]
         public void Setup()
         {
-            calc = new TOCalculator.Calculator();
+            _calc = new TOCalculator.Calculator();
+            _calc.Delimiters = _delimiters;
+            
             //calc.MaxArgs = 2;
         }
 
@@ -27,43 +30,56 @@ namespace TO_R365_CC_Tests
         //}
 
         [Test]
+        public void TestNewlineDelimeterIsSuccess()
+        {
+            string input = "10\n";
+            _calc.ParseInput(input);
+
+            Assert.That(_calc.Add(), Is.EqualTo("10"));
+            
+            input = "1\n2,3";
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("6"));            
+        }
+
+        [Test]
         public void TestInvalidInputsHandledIsSuccess()
         {
             string input = "20,";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("20"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("20"));
 
             input = ",20";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("20"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("20"));
 
             input = "5,tytyt";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("5"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("5"));
 
             input = "";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("0"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("0"));
         }
 
         [Test]
         public void TestSumsIsSuccess()
         {
             string input = "20";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("20"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("20"));
 
             input = "1,5000";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("5001"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("5001"));
 
             input = "4,-3";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("1"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("1"));
 
             input = "1,2,3,4,5,6,7,8,9,10,11,12";
-            calc.ParseInput(input);
-            Assert.That(calc.Add(), Is.EqualTo("78"));
+            _calc.ParseInput(input);
+            Assert.That(_calc.Add(), Is.EqualTo("78"));
 
         }
     }

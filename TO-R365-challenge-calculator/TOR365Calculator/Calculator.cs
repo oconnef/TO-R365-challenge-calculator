@@ -15,6 +15,13 @@ namespace TOCalculator
         //    set => _maxArgs = value;
         //}
 
+        private string[] _delimiters;
+        public string[] Delimiters
+        {
+            get => _delimiters;
+            set => _delimiters = value;
+        }
+
         public void ParseInput(string input)
         {
             //check for valid input
@@ -24,8 +31,8 @@ namespace TOCalculator
             //remove any white space
             input.Replace(" ","");
 
-            //parse input on ',' delimeter
-            string[] stringArgs = input.Split(',');
+            //parse input on delimeters
+            string[] stringArgs = input.Split(_delimiters, StringSplitOptions.None);
             //if(stringArgs.Length > _maxArgs)
             //    throw new ArgumentException("Too many arguments passed to Calculator. Max number of arguments is " + _maxArgs.ToString() + " Try Again...");
 

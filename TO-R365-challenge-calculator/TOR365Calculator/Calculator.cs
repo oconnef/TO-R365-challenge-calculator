@@ -12,11 +12,11 @@ namespace TOCalculator
         private string[] _delimiters;
         private char _delimiterTrimChar;
         private string _delimiterAnyLength;
+        private bool _allowNegatives;
 
         public int MaxVal 
         { 
             get => _maxVal;
-            set => _maxVal = value;
         }
         public string[] Delimiters
         {
@@ -26,14 +26,29 @@ namespace TOCalculator
         public char DelimiterTrimChar
         {
             get => _delimiterTrimChar;
-            set => _delimiterTrimChar = value;
         }
         public string DelimiterAnyLength
         {
             get => _delimiterAnyLength;
-            set => _delimiterAnyLength = value;
+        }
+        public bool AllowNegatives
+        {
+            get => _allowNegatives;
         }
 
+        public Calculator(
+            int maxVal, 
+            char delimiterTrimChar, 
+            string delimiterAnyLength, 
+            bool allowNegatives,
+            string[] delimiters)
+        {
+            _maxVal = maxVal;
+            _delimiters = delimiters;
+            _delimiterTrimChar = delimiterTrimChar;
+            _delimiterAnyLength = delimiterAnyLength;
+            _allowNegatives = allowNegatives;
+        }
 
         public void ParseInput(string customDelimiter, string input)
         {
@@ -70,11 +85,14 @@ namespace TOCalculator
             _addends = Array.ConvertAll(stringArgs,
                 s => (int.TryParse(s, out int intResult) ? (intResult > MaxVal ? 0 : intResult) : 0)).ToArray();  //replace invalid, > _maxVal, null or empty string with 0 
 
-            if (_addends.Any(t => t < 0))
+            if (!_allowNegatives)
             {
-                StringBuilder sb = new StringBuilder();
-                _addends.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
-                throw new ArgumentException("Negative arguments are not allowed! Invalid arguments are: " + sb.ToString().TrimEnd(','));
+                if (_addends.Any(t => t < 0))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    _addends.Where(t => t < 0).ToList().ForEach(t => sb.Append(t.ToString() + ","));
+                    throw new ArgumentException("Negative arguments are not allowed! Invalid arguments are: " + sb.ToString().TrimEnd(','));
+                }
             }
         }
 

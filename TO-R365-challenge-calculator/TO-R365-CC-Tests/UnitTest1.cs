@@ -110,5 +110,14 @@ namespace TO_R365_CC_Tests
             _calc.ParseInput(customDelimiter, input);
             Assert.That(_calc.Add(), Is.EqualTo("66"));
         }
+
+        [Test]
+        public void TestCustomDelimiterMultipleStringsIsSuccess()
+        {
+            string customDelimiter = "//[*][!!][r9r]";
+            string input = "11r9r22*hh*33!!44";
+            _calc.ParseInput(customDelimiter, input);
+            Assert.That(_calc.Add(), Is.EqualTo("110"));
+        }
     }
 }
